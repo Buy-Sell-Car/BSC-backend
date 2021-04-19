@@ -1,0 +1,45 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# MacOS Temp Files
+**/.DS_Store
+
+# VS Code Temp Files
+**/.vscode
+
+# Django media
+**/media
+
+# Django migrations
+**/migrations
+
+# Django collected static
+dish/static/*
+!dish/static/index.html
+
+# Nginx configured config
+dish/nginx.conf
+
+# Nginx cache
+cache
+
+# SSL Certs
+*.crt
+*.key
