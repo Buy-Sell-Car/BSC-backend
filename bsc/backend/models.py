@@ -42,3 +42,4 @@ class Advert(models.Model):
     prod_year = models.IntegerField()
     owners = models.IntegerField()
     color = models.CharField(choices=Colors.choices, max_length=2)
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
