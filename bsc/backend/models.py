@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.models import User
 
 # Create your models here.
 
@@ -12,6 +13,9 @@ class CarModel(models.Model):
     name = models.CharField(max_length=255)
     brand = models.ForeignKey(CarBrand, on_delete=models.CASCADE)
 
+class Profile(User):
+    city = models.CharField(max_length=128)
+    tel = models.CharField(max_length=11)
 
 class Advert(models.Model):
 
