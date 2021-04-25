@@ -25,8 +25,7 @@ class CarModelAPIView(viewsets.ReadOnlyModelViewSet):
 class ProfileAPIView(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-    permission_classes = [
-        permissions.IsAuthenticatedOrReadOnly, IsCurrentUserOrReadOnly]
+    permission_classes = [IsCurrentUserOrReadOnly]
 
 
 class AdvertAPIView(viewsets.ModelViewSet):
