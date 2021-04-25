@@ -1,8 +1,15 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
+import uuid
+import os
 
 # Create your models here.
+
+def custom_save_path(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = "%s.%s" % (uuid.uuid4(), ext)
+    return os.path.join('img/', filename)
 
 
 class CarBrand(models.Model):
@@ -45,3 +52,9 @@ class Advert(models.Model):
     owners = models.IntegerField()
     color = models.CharField(choices=Colors.choices, max_length=2)
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+
+
+class AdvertImage(models.Model):
+    advert = models.ForeignKey(Advert, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to=custom_save_path)
+    default = models.BooleanField(default=False)
