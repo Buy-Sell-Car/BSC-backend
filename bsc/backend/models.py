@@ -13,9 +13,11 @@ class CarModel(models.Model):
     name = models.CharField(max_length=255)
     brand = models.ForeignKey(CarBrand, on_delete=models.CASCADE)
 
+
 class Profile(User):
     city = models.CharField(max_length=128)
     tel = models.CharField(max_length=11)
+
 
 class Advert(models.Model):
 
@@ -35,7 +37,7 @@ class Advert(models.Model):
         Orange = 'OR', _('Orange')
 
     carmodel = models.ForeignKey(CarModel, on_delete=models.PROTECT)
-    advert_date = models.DateField()
+    advert_date = models.DateField(auto_now_add=True)
     description = models.TextField()
     price = models.IntegerField()
     mileage = models.IntegerField()
