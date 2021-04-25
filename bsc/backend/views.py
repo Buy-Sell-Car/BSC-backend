@@ -6,6 +6,8 @@ from .models import CarBrand, CarModel, Profile
 
 from rest_framework import viewsets
 from .serializers import CarBrandSerializer, CarModelSerializer, ProfileSerializer
+from rest_framework import permissions
+from .permissions import IsCurrentUserOrReadOnly
 
 
 class CarBrandAPIView(viewsets.ReadOnlyModelViewSet):
@@ -21,3 +23,5 @@ class CarModelAPIView(viewsets.ReadOnlyModelViewSet):
 class ProfileAPIView(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
+    permission_classes = [
+        permissions.IsAuthenticatedOrReadOnly, IsCurrentUserOrReadOnly]
