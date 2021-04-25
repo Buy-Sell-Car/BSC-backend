@@ -28,7 +28,8 @@ venv.bak/
 **/media
 
 # Django migrations
-**/migrations
+**/migrations/*
+!**/migrations/__init__.py
 
 # Django collected static
 dish/static/*
