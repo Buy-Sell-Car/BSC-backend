@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import CarBrand, CarModel, Profile, Advert
+from .models import CarBrand, CarModel, Profile, Advert, AdvertImage
 
 
 class CarBrandSerializer(serializers.ModelSerializer):
@@ -38,10 +38,18 @@ class ProfileSerializer(serializers.ModelSerializer):
                   'email', 'password', 'city', 'tel')
 
 
+class AdvertImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AdvertImage
+        fields = '__all__'
+        read_only_fields = ('advert', )
+
+
 class AdvertSerializer(serializers.ModelSerializer):
     current_user = serializers.HiddenField(
         default=serializers.CurrentUserDefault()
     )
+    advertimage_set = AdvertImageSerializer(many=True, read_only=True)
 
     class Meta:
         model = Advert
@@ -50,13 +58,19 @@ class AdvertSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = validated_data.pop('current_user')
-        validated_data['profile'] = Profile.objects.get(id = user.id)
-        return super().create(validated_data)
+        validated_data['profile'] = Profile.objects.get(id=user.id)
+        advert = super().create(validated_data)
+
+        images_data = self.context['request'].FILES
+        for img in images_data.getlist('file'):
+            AdvertImage.objects.create(advert=advert, image=img)
+        return advert
 
 
 class AdvertGetSerializer(serializers.ModelSerializer):
     carmodel = CarModelSerializer()
     profile = ProfileSerializer()
+    advertimage_set = AdvertImageSerializer(many=True)
 
     class Meta:
         model = Advert
