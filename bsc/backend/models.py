@@ -13,17 +13,28 @@ def custom_save_path(instance, filename):
 
 
 class CarBrand(models.Model):
-    name = models.CharField(max_length=255, verbose_name='Марка автомобиля')
+    name = models.CharField(max_length=255, verbose_name='марка автомобиля')
 
+    def __str__(self):
+        return self.name
+    
 
 class CarModel(models.Model):
-    name = models.CharField(max_length=255, verbose_name='Модель автомобиля')
-    brand = models.ForeignKey(CarBrand, on_delete=models.CASCADE, verbose_name='Марка автомобиля')
+    name = models.CharField(max_length=255, verbose_name='модель автомобиля')
+    brand = models.ForeignKey(CarBrand, on_delete=models.CASCADE, verbose_name='марка автомобиля')
+    
+    def __str__(self):
+        return "%s %s" % (self.brand, self.name)
+    
 
 
 class Profile(User):
-    city = models.CharField(max_length=128, verbose_name='Город')
-    tel = models.CharField(max_length=11, verbose_name='Телефон')
+    city = models.CharField(max_length=128, verbose_name='город')
+    tel = models.CharField(max_length=11, verbose_name='телефон')
+
+    def __str__(self):
+        return self.username
+    
 
 
 class Advert(models.Model):
@@ -43,18 +54,25 @@ class Advert(models.Model):
         PINK = 'PI', _('Pink')
         Orange = 'OR', _('Orange')
 
-    carmodel = models.ForeignKey(CarModel, on_delete=models.PROTECT, verbose_name='Модель автомобиля')
-    advert_date = models.DateField(auto_now_add=True, verbose_name='Дата  публикации')
-    description = models.TextField(verbose_name='Описание')
-    price = models.IntegerField(verbose_name='Стоимость')
-    mileage = models.IntegerField(verbose_name='Пробег')
-    prod_year = models.IntegerField(verbose_name='Дата производства')
-    owners = models.IntegerField(verbose_name='Количество владельцев по ПТС')
-    color = models.CharField(choices=Colors.choices, max_length=2, verbose_name='Цвет')
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, verbose_name='Автор объявления')
+    carmodel = models.ForeignKey(CarModel, on_delete=models.PROTECT, verbose_name='модель автомобиля')
+    advert_date = models.DateField(auto_now_add=True, verbose_name='дата публикации')
+    description = models.TextField(verbose_name='описание')
+    price = models.IntegerField(verbose_name='стоимость')
+    mileage = models.IntegerField(verbose_name='пробег')
+    prod_year = models.IntegerField(verbose_name='дата производства')
+    owners = models.IntegerField(verbose_name='количество владельцев по ПТС')
+    color = models.CharField(choices=Colors.choices, max_length=2, verbose_name='цвет')
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, verbose_name='автор объявления')
 
+    def __str__(self):
+        return self.description
+    
 
 class AdvertImage(models.Model):
-    advert = models.ForeignKey(Advert, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to=custom_save_path)
-    default = models.BooleanField(default=False)
+    advert = models.ForeignKey(Advert, on_delete=models.CASCADE, verbose_name='объявление')
+    image = models.ImageField(upload_to=custom_save_path, verbose_name='изображение')
+    default = models.BooleanField(default=False, verbose_name='стандартное')
+
+    def __str__(self):
+        return self.advert
+    
