@@ -13,17 +13,17 @@ def custom_save_path(instance, filename):
 
 
 class CarBrand(models.Model):
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, verbose_name='Марка автомобиля')
 
 
 class CarModel(models.Model):
-    name = models.CharField(max_length=255)
-    brand = models.ForeignKey(CarBrand, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255, verbose_name='Модель автомобиля')
+    brand = models.ForeignKey(CarBrand, on_delete=models.CASCADE, verbose_name='Марка автомобиля')
 
 
 class Profile(User):
-    city = models.CharField(max_length=128)
-    tel = models.CharField(max_length=11)
+    city = models.CharField(max_length=128, verbose_name='Город')
+    tel = models.CharField(max_length=11, verbose_name='Телефон')
 
 
 class Advert(models.Model):
@@ -43,15 +43,15 @@ class Advert(models.Model):
         PINK = 'PI', _('Pink')
         Orange = 'OR', _('Orange')
 
-    carmodel = models.ForeignKey(CarModel, on_delete=models.PROTECT)
-    advert_date = models.DateField(auto_now_add=True)
-    description = models.TextField()
-    price = models.IntegerField()
-    mileage = models.IntegerField()
-    prod_year = models.IntegerField()
-    owners = models.IntegerField()
-    color = models.CharField(choices=Colors.choices, max_length=2)
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    carmodel = models.ForeignKey(CarModel, on_delete=models.PROTECT, verbose_name='Модель автомобиля')
+    advert_date = models.DateField(auto_now_add=True, verbose_name='Дата  публикации')
+    description = models.TextField(verbose_name='Описание')
+    price = models.IntegerField(verbose_name='Стоимость')
+    mileage = models.IntegerField(verbose_name='Пробег')
+    prod_year = models.IntegerField(verbose_name='Дата производства')
+    owners = models.IntegerField(verbose_name='Количество владельцев по ПТС')
+    color = models.CharField(choices=Colors.choices, max_length=2, verbose_name='Цвет')
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, verbose_name='Автор объявления')
 
 
 class AdvertImage(models.Model):
