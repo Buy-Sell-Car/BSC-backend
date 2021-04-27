@@ -65,7 +65,7 @@ class Advert(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, verbose_name='автор объявления')
 
     def __str__(self):
-        return self.description
+        return "%s %s " % (self.carmodel, self.description)
     
 
 class AdvertImage(models.Model):
@@ -74,5 +74,5 @@ class AdvertImage(models.Model):
     default = models.BooleanField(default=False, verbose_name='стандартное')
 
     def __str__(self):
-        return self.advert
+        return str(self.advert)
     
