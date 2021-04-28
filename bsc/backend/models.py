@@ -54,18 +54,52 @@ class Advert(models.Model):
         PINK = 'PI', _('Pink')
         Orange = 'OR', _('Orange')
 
+    class Fuels(models.TextChoices):
+        PETROL = 'PR', _('Petrol')
+        DIESEL = 'DS', _('Diesel')
+        ELECTRICITY = "EL", _('Electricity')
+
+    class Drives(models.TextChoices):
+        AWD = 'AW', _('All-wheel-drives')
+        RWD = 'RW', _('Rear-whell-drives')
+        FWD = 'FW', _('Front-whell-drives')
+    
+    class Transmissions(models.TextChoices):
+        MANUAL = 'MT', _('Manual')
+        AUTO = 'AT', _('Auto')
+        CVT = 'CT', _('CVT')
+        ROBOTIC = 'RT', _('Robotic')
+
+    class Body(models.TextChoices):
+        SEDAN = 'SD', _('Sedan')
+        HATCHBACK = 'HB', _('Hatchback')
+        LIFTBACK = 'LB', _('Liftback')
+        SUV = 'SV', _('Suv')
+        COUPE = 'CP', _('Coupe')
+        CABRIO = 'CB', _('Cabrio')
+        WAGON = 'WG', _('Wagon')
+        MINIVAN = 'MV', _('Minivan')
+        PICKUP = 'PC', _('Pickup')
+        LIMOUSINE = 'LM', _('Limousine')
+        VAN = 'VN', _('Van')
+
     carmodel = models.ForeignKey(CarModel, on_delete=models.PROTECT, verbose_name='модель автомобиля')
+    power = models.IntegerField(verbose_name='мощность двигателя')
+    fuel = models.CharField(choices=Fuels.choices, max_length=2, verbose_name='топливо')
+    drive = models.CharField(choices=Drives.choices, max_length=2, verbose_name='привод')
+    transmission = models.CharField(choices=Transmissions.choices, max_length=2, verbose_name='коробка передач')
+    carbody = models.CharField(choices=Body.choices, max_length=2, verbose_name='кузов')
     advert_date = models.DateField(auto_now_add=True, verbose_name='дата публикации')
     description = models.TextField(verbose_name='описание')
     price = models.IntegerField(verbose_name='стоимость')
     mileage = models.IntegerField(verbose_name='пробег')
-    prod_year = models.IntegerField(verbose_name='дата производства')
+    prod_year = models.IntegerField(verbose_name='год выпуска')
     owners = models.IntegerField(verbose_name='количество владельцев по ПТС')
     color = models.CharField(choices=Colors.choices, max_length=2, verbose_name='цвет')
     profile = models.ForeignKey(Profile, on_delete=models.CASCADE, verbose_name='автор объявления')
 
     def __str__(self):
-        return "%s %s " % (self.carmodel, self.description)
+        return "%s %s %s" % (self.profile.username, self.carmodel, self.advert_date)
     
 
 class AdvertImage(models.Model):
