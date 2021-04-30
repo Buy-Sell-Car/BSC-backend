@@ -3,6 +3,7 @@ from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import User
 import uuid
 import os
+from phonenumber_field.modelfields import PhoneNumberField
 
 # Create your models here.
 
@@ -30,7 +31,7 @@ class CarModel(models.Model):
 
 class Profile(User):
     city = models.CharField(max_length=128, verbose_name='город')
-    tel = models.CharField(max_length=11, verbose_name='телефон')
+    tel = PhoneNumberField(verbose_name='телефон')
 
     def __str__(self):
         return self.username
