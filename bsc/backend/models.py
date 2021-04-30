@@ -7,6 +7,7 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 # Create your models here.
 
+
 def custom_save_path(instance, filename):
     ext = filename.split('.')[-1]
     filename = "%s.%s" % (uuid.uuid4(), ext)
@@ -18,24 +19,25 @@ class CarBrand(models.Model):
 
     def __str__(self):
         return self.name
-    
+
 
 class CarModel(models.Model):
     name = models.CharField(max_length=255, verbose_name='модель автомобиля')
-    brand = models.ForeignKey(CarBrand, on_delete=models.CASCADE, verbose_name='марка автомобиля')
-    
+    brand = models.ForeignKey(
+        CarBrand, on_delete=models.CASCADE, verbose_name='марка автомобиля')
+
     def __str__(self):
         return "%s %s" % (self.brand, self.name)
-    
 
 
 class Profile(User):
     city = models.CharField(max_length=128, verbose_name='город')
     tel = PhoneNumberField(verbose_name='телефон')
+    favourite = models.ManyToManyField(
+        'Advert', verbose_name='закладки', blank=True, related_name='favourites')
 
     def __str__(self):
         return self.username
-    
 
 
 class Advert(models.Model):
@@ -64,7 +66,7 @@ class Advert(models.Model):
         AWD = 'AW', _('Полный')
         RWD = 'RW', _('Задний')
         FWD = 'FW', _('Передний')
-    
+
     class Transmissions(models.TextChoices):
         MANUAL = 'MT', _('Механическая')
         AUTO = 'AT', _('Автомат')
@@ -84,30 +86,39 @@ class Advert(models.Model):
         LIMOUSINE = 'LM', _('Лимузин')
         VAN = 'VN', _('Фургон')
 
-    carmodel = models.ForeignKey(CarModel, on_delete=models.PROTECT, verbose_name='модель автомобиля')
+    carmodel = models.ForeignKey(
+        CarModel, on_delete=models.PROTECT, verbose_name='модель автомобиля')
     power = models.IntegerField(verbose_name='мощность двигателя (л.с.)')
-    fuel = models.CharField(choices=Fuels.choices, max_length=2, verbose_name='топливо')
-    drive = models.CharField(choices=Drives.choices, max_length=2, verbose_name='привод')
-    transmission = models.CharField(choices=Transmissions.choices, max_length=2, verbose_name='коробка передач')
-    carbody = models.CharField(choices=Body.choices, max_length=2, verbose_name='кузов')
-    advert_date = models.DateField(auto_now_add=True, verbose_name='дата публикации')
+    fuel = models.CharField(choices=Fuels.choices,
+                            max_length=2, verbose_name='топливо')
+    drive = models.CharField(choices=Drives.choices,
+                             max_length=2, verbose_name='привод')
+    transmission = models.CharField(
+        choices=Transmissions.choices, max_length=2, verbose_name='коробка передач')
+    carbody = models.CharField(
+        choices=Body.choices, max_length=2, verbose_name='кузов')
+    advert_date = models.DateField(
+        auto_now_add=True, verbose_name='дата публикации')
     description = models.TextField(verbose_name='описание')
     price = models.IntegerField(verbose_name='стоимость (руб)')
     mileage = models.IntegerField(verbose_name='пробег (км)')
     prod_year = models.IntegerField(verbose_name='год выпуска')
     owners = models.IntegerField(verbose_name='количество владельцев по ПТС')
-    color = models.CharField(choices=Colors.choices, max_length=2, verbose_name='цвет')
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, verbose_name='автор объявления')
+    color = models.CharField(choices=Colors.choices,
+                             max_length=2, verbose_name='цвет')
+    profile = models.ForeignKey(
+        Profile, on_delete=models.CASCADE, verbose_name='автор объявления')
 
     def __str__(self):
         return "%s %s %s" % (self.profile.username, self.carmodel, self.advert_date)
-    
+
 
 class AdvertImage(models.Model):
-    advert = models.ForeignKey(Advert, on_delete=models.CASCADE, verbose_name='объявление')
-    image = models.ImageField(upload_to=custom_save_path, verbose_name='изображение')
+    advert = models.ForeignKey(
+        Advert, on_delete=models.CASCADE, verbose_name='объявление')
+    image = models.ImageField(
+        upload_to=custom_save_path, verbose_name='изображение')
     default = models.BooleanField(default=False, verbose_name='стандартное')
 
     def __str__(self):
         return str(self.advert)
-    

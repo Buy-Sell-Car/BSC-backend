@@ -18,27 +18,6 @@ class CarModelSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ProfileSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
-
-    def create(self, validated_data):
-        user = super().create(validated_data)
-        user.set_password(validated_data['password'])
-        user.save()
-        return user
-
-    def update(self, instance, validated_data):
-        user = super().update(instance, validated_data)
-        user.set_password(validated_data['password'])
-        user.save()
-        return user
-
-    class Meta:
-        model = Profile
-        fields = ('id', 'username', 'first_name', 'last_name',
-                  'email', 'password', 'city', 'tel')
-
-
 class AdvertImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = AdvertImage
@@ -68,19 +47,49 @@ class AdvertSerializer(serializers.ModelSerializer):
         return advert
 
 
+class ProfileForAdvertSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = ('first_name', 'last_name', 'city', 'tel')
+
+
 class AdvertGetSerializer(serializers.ModelSerializer):
     carmodel = CarModelSerializer()
-    profile = ProfileSerializer()
+    profile = ProfileForAdvertSerializer()
     advertimage_set = AdvertImageSerializer(many=True)
     fuel = serializers.CharField(source='get_fuel_display')
     drive = serializers.CharField(source='get_drive_display')
     transmission = serializers.CharField(source='get_transmission_display')
     carbody = serializers.CharField(source='get_carbody_display')
     color = serializers.CharField(source='get_color_display')
+    favourite = serializers.IntegerField(
+        source='favourites.count', read_only=True)
 
     class Meta:
         model = Advert
         fields = '__all__'
+
+
+class ProfileSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+    favourite = AdvertSerializer(many=True, read_only=True)
+
+    def create(self, validated_data):
+        user = super().create(validated_data)
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
+
+    def update(self, instance, validated_data):
+        user = super().update(instance, validated_data)
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
+
+    class Meta:
+        model = Profile
+        fields = ('id', 'username', 'first_name', 'last_name',
+                  'email', 'password', 'city', 'tel', 'favourite')
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
