@@ -1,13 +1,16 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from rest_framework import status
 
 # Create your views here.
 
 from .models import CarBrand, CarModel, Profile, Advert
 
 from rest_framework import viewsets
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import (
-    CarBrandSerializer, CarModelSerializer, ProfileSerializer, 
+    CarBrandSerializer, CarModelSerializer, ProfileSerializer,
     AdvertSerializer, AdvertGetSerializer, CustomTokenObtainPairSerializer)
 from rest_framework import permissions
 from .permissions import IsCurrentUserOrReadOnly, IsOwnerOrReadOnly
@@ -43,3 +46,28 @@ class AdvertAPIView(viewsets.ModelViewSet):
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = CustomTokenObtainPairSerializer
+
+
+class PostView(APIView):
+
+    def put(self, request, userpk, advertpk):
+        post = get_object_or_404(Advert, pk=advertpk)
+        if request.user.is_authenticated:
+            profile = Profile.objects.get(id=request.user.id)
+            if profile not in post.favourites.all():
+                post.favourites.add(profile)
+                return Response({'detail': 'User added to post'}, status=status.HTTP_200_OK)
+            return Response({'detail': 'Already in favourite'}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'detail': 'Unathorized'}, status=status.HTTP_401_UNAUTHORIZED)
+
+    def delete(self, request, userpk, advertpk):
+        post = get_object_or_404(Advert, pk=advertpk)
+        if request.user.is_authenticated:
+            profile = Profile.objects.get(id=request.user.id)
+            if profile in post.favourites.all():
+                post.favourites.remove(profile)
+                return Response({'detail': 'User removed from post'}, status=status.HTTP_204_NO_CONTENT)
+            return Response({'detail': self.bad_request_message}, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response({'detail': 'Unathorized'}, status=status.HTTP_401_UNAUTHORIZED)
