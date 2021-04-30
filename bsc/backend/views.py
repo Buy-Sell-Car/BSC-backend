@@ -5,9 +5,10 @@ from django.shortcuts import render
 from .models import CarBrand, CarModel, Profile, Advert
 
 from rest_framework import viewsets
+from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import (
     CarBrandSerializer, CarModelSerializer, ProfileSerializer, 
-    AdvertSerializer, AdvertGetSerializer)
+    AdvertSerializer, AdvertGetSerializer, CustomTokenObtainPairSerializer)
 from rest_framework import permissions
 from .permissions import IsCurrentUserOrReadOnly, IsOwnerOrReadOnly
 
@@ -38,3 +39,7 @@ class AdvertAPIView(viewsets.ModelViewSet):
         if self.action in ('list', 'retrieve'):
             return AdvertGetSerializer
         return AdvertSerializer
+
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
