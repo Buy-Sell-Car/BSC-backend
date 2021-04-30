@@ -71,8 +71,12 @@ class AdvertGetSerializer(serializers.ModelSerializer):
     carmodel = CarModelSerializer()
     profile = ProfileSerializer()
     advertimage_set = AdvertImageSerializer(many=True)
+    fuel = serializers.CharField(source='get_fuel_display')
+    drive = serializers.CharField(source='get_drive_display')
+    transmission = serializers.CharField(source='get_transmission_display')
+    carbody = serializers.CharField(source='get_carbody_display')
+    color = serializers.CharField(source='get_color_display')
 
     class Meta:
         model = Advert
         fields = '__all__'
-        read_only_fields = ('advert_date', 'profile')
