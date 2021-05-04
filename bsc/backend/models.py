@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 import uuid
 import os
 from phonenumber_field.modelfields import PhoneNumberField
+from .managers import CarModelManager
 
 # Create your models here.
 
@@ -25,6 +26,7 @@ class CarModel(models.Model):
     name = models.CharField(max_length=255, verbose_name='модель автомобиля')
     brand = models.ForeignKey(
         CarBrand, on_delete=models.CASCADE, verbose_name='марка автомобиля')
+    objects = CarModelManager.as_manager()
 
     def __str__(self):
         return "%s %s" % (self.brand, self.name)

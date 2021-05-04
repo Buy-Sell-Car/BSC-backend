@@ -25,6 +25,14 @@ class CarModelAPIView(viewsets.ReadOnlyModelViewSet):
     queryset = CarModel.objects.all()
     serializer_class = CarModelSerializer
 
+    def get_queryset(self):
+        list_models = self.queryset
+        query = self.request.query_params.get('brand')
+        if (query):
+            list_models = list_models.is_brand(query)
+
+        return list_models
+
 
 class ProfileAPIView(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
