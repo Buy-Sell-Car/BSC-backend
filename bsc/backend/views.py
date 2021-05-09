@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework import status
+from django.db.models import Count
 
 # Create your views here.
 
@@ -50,6 +51,46 @@ class AdvertAPIView(viewsets.ModelViewSet):
         if self.action in ('list', 'retrieve'):
             return AdvertGetSerializer
         return AdvertSerializer
+
+    def get_queryset(self):
+        list_models = self.queryset
+        query_string = self.request.query_params
+        for q in query_string:
+            if q == 'brand':
+                list_models = list_models.filter(carmodel__brand=query_string[q])
+            elif q in ('carmodel', 'color', 'carbody', 'transmission', 'fuel', 'drive'):
+                list_models = list_models.filter(**{q: query_string[q]})
+            elif q == 'owners':
+                list_models = list_models.filter(owners__lte=query_string[q])
+            elif q == 'year_from':
+                list_models = list_models.filter(prod_year__gte=query_string[q])
+            elif q == 'year_to':
+                list_models = list_models.filter(prod_year__lte=query_string[q])
+            elif q == 'price_from':
+                list_models = list_models.filter(price__gte=query_string[q])
+            elif q == 'price_to':
+                list_models = list_models.filter(price__lte=query_string[q])
+            elif q == 'withPhoto' and query_string[q] == 'true':
+                list_models = list_models.annotate(count=Count('advertimage')).filter(count__gte=1)
+            elif q == 'mileage_from':
+                list_models = list_models.filter(mileage__gte=query_string[q])
+            elif q == 'mileage_to':
+                list_models = list_models.filter(mileage__lte=query_string[q])
+            elif q == 'sort':
+                if query_string[q] == 'PD':
+                    list_models = list_models.order_by('-advert_date')
+                elif query_string[q] == 'YN':
+                    list_models = list_models.order_by('-prod_year')
+                elif query_string[q] == 'YO':
+                    list_models = list_models.order_by('prod_year')
+                elif query_string[q] == 'MI':
+                    list_models = list_models.order_by('mileage')
+                elif query_string[q] == 'PI':
+                    list_models = list_models.order_by('price')
+                elif query_string[q] == 'PD':
+                    list_models = list_models.order_by('-price')
+
+        return list_models
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
