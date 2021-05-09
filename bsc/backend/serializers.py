@@ -72,7 +72,8 @@ class AdvertGetSerializer(serializers.ModelSerializer):
 
 class ProfileSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
-    favourite = AdvertSerializer(many=True, read_only=True)
+    favourite = AdvertGetSerializer(many=True, read_only=True)
+    advert_set = AdvertGetSerializer(many=True, read_only=True)
 
     def create(self, validated_data):
         user = super().create(validated_data)
@@ -90,7 +91,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = Profile
         fields = ('id', 'username', 'first_name', 'last_name',
-                  'email', 'password', 'city', 'tel', 'favourite')
+                  'email', 'password', 'city', 'tel', 'favourite', 'advert_set')
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
