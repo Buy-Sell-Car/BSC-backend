@@ -53,7 +53,7 @@ class AdvertAPIView(viewsets.ModelViewSet):
         return AdvertSerializer
 
     def get_queryset(self):
-        list_models = self.queryset
+        list_models = Advert.objects.all()
         query_string = self.request.query_params
         for q in query_string:
             if q == 'brand':
@@ -87,7 +87,7 @@ class AdvertAPIView(viewsets.ModelViewSet):
                     list_models = list_models.order_by('mileage')
                 elif query_string[q] == 'PI':
                     list_models = list_models.order_by('price')
-                elif query_string[q] == 'PD':
+                elif query_string[q] == 'PM':
                     list_models = list_models.order_by('-price')
 
         return list_models
